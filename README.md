@@ -20,7 +20,7 @@ In these examples all images are added to the openshift namespace. Ensure that y
 oc create -f https://raw.githubusercontent.com/jupyter-on-openshift/jupyter-notebooks/master/images.json -n openshift
 ```
 
-once the images have been created (see original instructions on how to confirm), you can test the deployment
+once the images have been created (see original instructions on how to confirm, a tagged image ``s2i-minimal-notebook:3.5`` should be created in the openshift project or the project you ran the command in), you can test the deployment
 
 ```
 oc new-app s2i-minimal-notebook:3.5 --name my-notebook \
@@ -32,4 +32,20 @@ Go ahead and delete the deplyment
 ```
 oc delete all --lapp=my-notebook
 
+```
+
+Save the images to tar files
+
+```
+docker save $LOCAL_DOCKER_REGISTRY/openshift/s2i-minimal-notebook:3.5 > s2i-minimal-notebook.tar
+docker save $LOCAL_DOCKER_REGISTRY/openshift/s2i-tensorflow-notebook:3.5 > s2i-tensorflow-notebook.tar
+docker save $LOCAL_DOCKER_REGISTRY/openshift/s2i-scipy-notebook:3.5 > s2i-scipy-notebook.tar
+```
+
+Example if $LOCAL_DOCKER_REGISTRY=172.30.1.1:5000
+
+```
+docker save 172.30.1.1:5000/openshift/s2i-minimal-notebook:3.5 > s2i-minimal-notebook.tar
+docker save 172.30.1.1:5000/openshift/s2i-tensorflow-notebook:3.5 > s2i-tensorflow-notebook.tar
+docker save 172.30.1.1:5000/openshift/s2i-scipy-notebook:3.5 > s2i-scipy-notebook.tar
 ```
