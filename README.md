@@ -17,31 +17,34 @@ see original_readme.md. This instructions assume the images are on version 3.5. 
 In these examples all images are added to the openshift namespace. Ensure that your user has permission to write to this project. If not, substitute "openshift" namespace for a project you have access to
 
 
-```
-set $LOCAL_IMAGE_PROJECT=openshit # change appropiatedly
-oc create -f https://raw.githubusercontent.com/jupyter-on-openshift/jupyter-notebooks/master/images.json -n $LOCAL_IMAGE_PROJECT
-```
-
-once the images have been created (see original instructions on how to confirm, a tagged image ``s2i-minimal-notebook:3.5`` should be created in the openshift project or the project you ran the command in), you can test the deployment
-
-```
-oc new-app s2i-minimal-notebook:3.5 --name my-notebook \
-    --env JUPYTER_NOTEBOOK_PASSWORD=mypassword
-```
-
-Go ahead and delete the deplyment 
-
-```
-oc delete all --lapp=my-notebook
-```
-
 Prepare the environment variables
 ```
 #modify as needed
 export LOCAL_DOCKER_REGISTRY=172.30.1.1:5000
 export LOCAL_IMAGE_PROJECT=openshift
 export JUPYTER_VERSION=3.5
+export JUPYTER_PASSWORD=mypassword
 ```
+
+Create the images
+```
+oc create -f https://raw.githubusercontent.com/jupyter-on-openshift/jupyter-notebooks/master/images.json -n $LOCAL_IMAGE_PROJECT
+```
+
+once the images have been created (see original instructions on how to confirm, a tagged image ``s2i-minimal-notebook:3.5`` should be created in the openshift project or the project you ran the command in), you can test the deployment
+
+```
+oc new-app s2i-minimal-notebook:$JUPYTER_VERSION --name my-notebook \
+    --env JUPYTER_NOTEBOOK_PASSWORD=$JUPYTER_PASSWORD
+```
+
+Go ahead and delete the deplyoment 
+
+```
+oc delete all --lapp=my-notebook
+```
+
+
 
 Save the images to tar files
 
@@ -98,14 +101,14 @@ Test the images by deploying
 ```
 oc new-project jupyter
 oc new-app s2i-minimal-notebook:$JUPYTER_VERSION --name my-notebook \
-    --env JUPYTER_NOTEBOOK_PASSWORD=mypassword
+    --env JUPYTER_NOTEBOOK_PASSWORD=$JUPYTER_PASSWORD
 
 oc create route edge my-notebook --service my-notebook \
     --insecure-policy Redirect
 ```
 confirm that it is working by accessing the notebook via the route
 
-login with "mypassword" (set above during deploy)
+login with $JUPYTER_PASSWORD  
 
 create a new python workspace
 
@@ -194,14 +197,14 @@ Test the images by deploying in the new cluster
 ```
 oc new-project jupyter
 oc new-app s2i-minimal-notebook:$JUPYTER_VERSION --name my-notebook \
-    --env JUPYTER_NOTEBOOK_PASSWORD=mypassword
+    --env JUPYTER_NOTEBOOK_PASSWORD=$JUPYTER_PASSWORD
 
 oc create route edge my-notebook --service my-notebook \
     --insecure-policy Redirect
 ```
 confirm that it is working by accessing the notebook via the created route
 
-login with "mypassword" (set above during deploy)
+login with $JUPYTER_PASSWORD (set above during deploy)
 
 create a new python workspace
 
