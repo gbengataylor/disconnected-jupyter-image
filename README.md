@@ -41,7 +41,7 @@ oc new-app s2i-minimal-notebook:$JUPYTER_VERSION --name my-notebook \
 Go ahead and delete the deplyoment 
 
 ```
-oc delete all --lapp=my-notebook
+oc delete all -lapp=my-notebook
 ```
 
 
