@@ -8,9 +8,11 @@ These instructions were created for jupyter notebood version 3.5. The local regi
 
 Transfer and unzip files
 ------------------------
+```
 gzip -d s2i-minimal-notebook.tar.gz
 gzip -d s2i-tensorflow-notebook.tar.gz
 gzip -d s2i-scipy-notebook.tar.gz
+```
 
 Load into docker registry
 -------------------------
