@@ -66,7 +66,11 @@ docker save 172.30.1.1:5000/openshift/s2i-scipy-notebook:$JUPYTER_VERSION > s2i-
 
 Now let's delete the images
 ```
-oc delete -f https://raw.githubusercontent.com/jupyter-on-openshift/jupyter-notebooks/master/images.json -n $LOCAL_IMAGE_PROJECT
+#oc delete -f https://raw.githubusercontent.com/jupyter-on-openshift/jupyter-notebooks/master/images.json -n $LOCAL_IMAGE_PROJECT
+
+# use our version
+oc delete -f https://raw.githubusercontent.com/gbengataylor/jupyter-notebooks/master/images.json  -n $LOCAL_IMAGE_PROJECT
+
 docker rmi $LOCAL_DOCKER_REGISTRY/$LOCAL_IMAGE_PROJECT/s2i-tensorflow-notebook:$JUPYTER_VERSION
 docker rmi $LOCAL_DOCKER_REGISTRY/$LOCAL_IMAGE_PROJECT/s2i-minimal-notebook:$JUPYTER_VERSION
 docker rmi $LOCAL_DOCKER_REGISTRY/$LOCAL_IMAGE_PROJECT/s2i-scipy-notebook:$JUPYTER_VERSION
