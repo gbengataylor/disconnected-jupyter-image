@@ -2,9 +2,9 @@
 Instructions for installing images in docker registry and deploying in openshift
 ================================================================================
 These images were  created using instructions in https://github.com/jupyter-on-openshift/jupyter-notebooks
-The readme for this file can be found in original_readme.md. Please read original_readme.md for a description about the images. 
+The readme for this git repo can be found in original_readme.md. Please read original_readme.md for a description about the images. 
 
-These instructions were created for jupyter notebood version 3.5. The local registry path it was created from was 172.30.1.1:5000/openshift
+The instructions below were created for jupyter notebook version 3.5 images. The local registry path it was created from was 172.30.1.1:5000/openshift
 
 Transfer and unzip files
 ------------------------
