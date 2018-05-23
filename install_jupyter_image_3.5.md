@@ -96,4 +96,4 @@ oc create route edge my-notebook --service my-notebook \
     --insecure-policy Redirect
 ```
 
-Access the created route and test away!
+Access the created route and test away!!
