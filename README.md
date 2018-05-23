@@ -102,9 +102,13 @@ oc create route edge my-notebook --service my-notebook \
     --insecure-policy Redirect
 ```
 confirm that it is working by accessing the notebook via the route
-login with mypassword
+
+login with "mypassword" (set above during deploy)
+
 create a new python workspace
-enter the following
+
+enter the following in the code section
+
 ```
 for i in range(500):
     print(2**i - 1)
