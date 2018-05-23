@@ -8,6 +8,7 @@ The instructions below were created for jupyter notebook version 3.5 images. The
 
 Transfer and unzip files
 ------------------------
+
 ```
 gzip -d s2i-minimal-notebook.tar.gz
 gzip -d s2i-tensorflow-notebook.tar.gz
