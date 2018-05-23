@@ -33,35 +33,37 @@ Go ahead and delete the deplyment
 
 ```
 oc delete all --lapp=my-notebook
+```
 
+Prepare the environment variables
+```
+#modify as needed
+export LOCAL_DOCKER_REGISTRY=172.30.1.1:5000
+export LOCAL_IMAGE_PROJECT=openshift
+export JUPYTER_VERSION=3.5
 ```
 
 Save the images to tar files
 
 ```
-docker save $LOCAL_DOCKER_REGISTRY/$LOCAL_IMAGE_PROJECT/s2i-minimal-notebook:3.5 > s2i-minimal-notebook.tar
-docker save $LOCAL_DOCKER_REGISTRY/$LOCAL_IMAGE_PROJECT/s2i-tensorflow-notebook:3.5 > s2i-tensorflow-notebook.tar
-docker save $LOCAL_DOCKER_REGISTRY/$LOCAL_IMAGE_PROJECT/s2i-scipy-notebook:3.5 > s2i-scipy-notebook.tar
+docker save $LOCAL_DOCKER_REGISTRY/$LOCAL_IMAGE_PROJECT/s2i-minimal-notebook:$JUPYTER_VERSION > s2i-minimal-notebook.tar
+docker save $LOCAL_DOCKER_REGISTRY/$LOCAL_IMAGE_PROJECT/s2i-tensorflow-notebook:$JUPYTER_VERSION > s2i-tensorflow-notebook.tar
+docker save $LOCAL_DOCKER_REGISTRY/$LOCAL_IMAGE_PROJECT/s2i-scipy-notebook:$JUPYTER_VERSION > s2i-scipy-notebook.tar
 ```
 
-Example if 
+Example
 ```
-export LOCAL_DOCKER_REGISTRY=172.30.1.1:5000
-export LOCAL_IMAGE_PROJECT=openshift
-```
-
-```
-docker save 172.30.1.1:5000/openshift/s2i-minimal-notebook:3.5 > s2i-minimal-notebook.tar
-docker save 172.30.1.1:5000/openshift/s2i-tensorflow-notebook:3.5 > s2i-tensorflow-notebook.tar
-docker save 172.30.1.1:5000/openshift/s2i-scipy-notebook:3.5 > s2i-scipy-notebook.tar
+docker save 172.30.1.1:5000/openshift/s2i-minimal-notebook:$JUPYTER_VERSION > s2i-minimal-notebook.tar
+docker save 172.30.1.1:5000/openshift/s2i-tensorflow-notebook:$JUPYTER_VERSION > s2i-tensorflow-notebook.tar
+docker save 172.30.1.1:5000/openshift/s2i-scipy-notebook:$JUPYTER_VERSION > s2i-scipy-notebook.tar
 ```
 
 Now let's delete the images
 ```
 oc delete -f https://raw.githubusercontent.com/jupyter-on-openshift/jupyter-notebooks/master/images.json -n $LOCAL_IMAGE_PROJECT
-docker rmi $LOCAL_DOCKER_REGISTRY/$LOCAL_IMAGE_PROJECT/s2i-tensorflow-notebook:3.5
-docker rmi $LOCAL_DOCKER_REGISTRY/$LOCAL_IMAGE_PROJECT/s2i-minimal-notebook:3.5
-docker rmi $LOCAL_DOCKER_REGISTRY/$LOCAL_IMAGE_PROJECT/s2i-scipy-notebook:3.5
+docker rmi $LOCAL_DOCKER_REGISTRY/$LOCAL_IMAGE_PROJECT/s2i-tensorflow-notebook:$JUPYTER_VERSION
+docker rmi $LOCAL_DOCKER_REGISTRY/$LOCAL_IMAGE_PROJECT/s2i-minimal-notebook:$JUPYTER_VERSION
+docker rmi $LOCAL_DOCKER_REGISTRY/$LOCAL_IMAGE_PROJECT/s2i-scipy-notebook:$JUPYTER_VERSION
 ```
 
 Verify they have been deleted. This command should return no results
@@ -87,15 +89,15 @@ Login into registry and push the images to the docker registry. Ensure that you 
 ```
 docker login -u openshift -p $(oc whoami -t) $LOCAL_DOCKER_REGISTRY
 
-docker push $LOCAL_DOCKER_REGISTRY/$LOCAL_IMAGE_PROJECT/s2i-minimal-notebook:3.5
-docker push $LOCAL_DOCKER_REGISTRY/$LOCAL_IMAGE_PROJECT/s2i-tensorflow-notebook:3.5
-docker push $LOCAL_DOCKER_REGISTRY/$LOCAL_IMAGE_PROJECT/s2i-scipy-notebook:3.5
+docker push $LOCAL_DOCKER_REGISTRY/$LOCAL_IMAGE_PROJECT/s2i-minimal-notebook:$JUPYTER_VERSION
+docker push $LOCAL_DOCKER_REGISTRY/$LOCAL_IMAGE_PROJECT/s2i-tensorflow-notebook:$JUPYTER_VERSION
+docker push $LOCAL_DOCKER_REGISTRY/$LOCAL_IMAGE_PROJECT/s2i-scipy-notebook:$JUPYTER_VERSION
 ```
 
 Test the images by deploying
 ```
 oc new-project jupyter
-oc new-app s2i-minimal-notebook:3.5 --name my-notebook \
+oc new-app s2i-minimal-notebook:$JUPYTER_VERSION --name my-notebook \
     --env JUPYTER_NOTEBOOK_PASSWORD=mypassword
 
 oc create route edge my-notebook --service my-notebook \
@@ -167,11 +169,11 @@ docker images | grep $LOCAL_DOCKER_REGISTRY/$LOCAL_IMAGE_PROJECT/s2i-
 
 Tag the images
 ```
-docker tag $LOCAL_DOCKER_REGISTRY/$LOCAL_IMAGE_PROJECT/s2i-minimal-notebook:3.5 $DOCKER_REGISTRY/$IMAGE_PROJECT/s2i-minimal-notebook:3.5
+docker tag $LOCAL_DOCKER_REGISTRY/$LOCAL_IMAGE_PROJECT/s2i-minimal-notebook:$JUPYTER_VERSION $DOCKER_REGISTRY/$IMAGE_PROJECT/s2i-minimal-notebook:$JUPYTER_VERSION
 
-docker tag $LOCAL_DOCKER_REGISTRY/$LOCAL_IMAGE_PROJECT/s2i-tensorflow-notebook:3.5 $DOCKER_REGISTRY/$IMAGE_PROJECT/s2i-tensorflow-notebook:3.5
+docker tag $LOCAL_DOCKER_REGISTRY/$LOCAL_IMAGE_PROJECT/s2i-tensorflow-notebook:$JUPYTER_VERSION $DOCKER_REGISTRY/$IMAGE_PROJECT/s2i-tensorflow-notebook:$JUPYTER_VERSION
 
-docker tag $LOCAL_DOCKER_REGISTRY/$LOCAL_IMAGE_PROJECT/s2i-scipy-notebook:3.5 $DOCKER_REGISTRY/$IMAGE_PROJECT/s2i-scipy-notebook:3.5
+docker tag $LOCAL_DOCKER_REGISTRY/$LOCAL_IMAGE_PROJECT/s2i-scipy-notebook:$JUPYTER_VERSION $DOCKER_REGISTRY/$IMAGE_PROJECT/s2i-scipy-notebook:$JUPYTER_VERSION
 ```
 
 Verify that the images have been added
@@ -181,17 +183,17 @@ docker images | grep $DOCKER_REGISTRY/$IMAGE_PROJECT/s2i-
 
 Push the images to the registry
 ```
-docker push $DOCKER_REGISTRY/$IMAGE_PROJECT/s2i-minimal-notebook:3.5
+docker push $DOCKER_REGISTRY/$IMAGE_PROJECT/s2i-minimal-notebook:$JUPYTER_VERSION
 
-docker push $DOCKER_REGISTRY/$IMAGE_PROJECT/s2i-tensorflow-notebook:3.5
+docker push $DOCKER_REGISTRY/$IMAGE_PROJECT/s2i-tensorflow-notebook:$JUPYTER_VERSION
 
-docker push $DOCKER_REGISTRY/$IMAGE_PROJECT/s2i-scipy-notebook:3.5
+docker push $DOCKER_REGISTRY/$IMAGE_PROJECT/s2i-scipy-notebook:$JUPYTER_VERSION
 ```
 
 Test the images by deploying in the new cluster
 ```
 oc new-project jupyter
-oc new-app s2i-minimal-notebook:3.5 --name my-notebook \
+oc new-app s2i-minimal-notebook:$JUPYTER_VERSION --name my-notebook \
     --env JUPYTER_NOTEBOOK_PASSWORD=mypassword
 
 oc create route edge my-notebook --service my-notebook \
