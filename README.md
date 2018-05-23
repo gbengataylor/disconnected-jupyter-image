@@ -16,8 +16,10 @@ see original_readme.md. This instructions assume the images are on version 3.5. 
 
 In these examples all images are added to the openshift namespace. Ensure that your user has permission to write to this project. If not, substitute "openshift" namespace for a project you have access to
 
+
 ```
-oc create -f https://raw.githubusercontent.com/jupyter-on-openshift/jupyter-notebooks/master/images.json -n openshift
+set $LOCAL_IMAGE_PROJECT=openshit # change appropiatedly
+oc create -f https://raw.githubusercontent.com/jupyter-on-openshift/jupyter-notebooks/master/images.json -n $LOCAL_IMAGE_PROJECT
 ```
 
 once the images have been created (see original instructions on how to confirm, a tagged image ``s2i-minimal-notebook:3.5`` should be created in the openshift project or the project you ran the command in), you can test the deployment
@@ -37,15 +39,29 @@ oc delete all --lapp=my-notebook
 Save the images to tar files
 
 ```
-docker save $LOCAL_DOCKER_REGISTRY/openshift/s2i-minimal-notebook:3.5 > s2i-minimal-notebook.tar
-docker save $LOCAL_DOCKER_REGISTRY/openshift/s2i-tensorflow-notebook:3.5 > s2i-tensorflow-notebook.tar
-docker save $LOCAL_DOCKER_REGISTRY/openshift/s2i-scipy-notebook:3.5 > s2i-scipy-notebook.tar
+docker save $LOCAL_DOCKER_REGISTRY/$LOCAL_IMAGE_PROJECT/s2i-minimal-notebook:3.5 > s2i-minimal-notebook.tar
+docker save $LOCAL_DOCKER_REGISTRY/$LOCAL_IMAGE_PROJECT/s2i-tensorflow-notebook:3.5 > s2i-tensorflow-notebook.tar
+docker save $LOCAL_DOCKER_REGISTRY/$LOCAL_IMAGE_PROJECT/s2i-scipy-notebook:3.5 > s2i-scipy-notebook.tar
 ```
 
-Example if $LOCAL_DOCKER_REGISTRY=172.30.1.1:5000
+Example if 
+```
+export LOCAL_DOCKER_REGISTRY=172.30.1.1:5000
+export LOCAL_IMAGE_PROJECT=openshift
+```
 
 ```
 docker save 172.30.1.1:5000/openshift/s2i-minimal-notebook:3.5 > s2i-minimal-notebook.tar
 docker save 172.30.1.1:5000/openshift/s2i-tensorflow-notebook:3.5 > s2i-tensorflow-notebook.tar
 docker save 172.30.1.1:5000/openshift/s2i-scipy-notebook:3.5 > s2i-scipy-notebook.tar
 ```
+
+Now let's delete the images
+```
+oc delete -f https://raw.githubusercontent.com/jupyter-on-openshift/jupyter-notebooks/master/images.json -n $LOCAL_IMAGE_PROJECT
+docker rmi $LOCAL_DOCKER_REGISTRY/$LOCAL_IMAGE_PROJECT/s2i-tensorflow-notebook:3.5
+docker rmi $LOCAL_DOCKER_REGISTRY/$LOCAL_IMAGE_PROJECT/s2i-minimal-notebook:3.5
+docker rmi $LOCAL_DOCKER_REGISTRY/$LOCAL_IMAGE_PROJECT/s2i-scipy-notebook:3.5
+```
+
+
