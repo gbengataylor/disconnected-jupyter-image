@@ -147,7 +147,7 @@ gzip -d s2i-scipy-notebook.tar.gz
 Prepare environment variables
 ```
 # modify as needed 
-export OPENSHIFT_CONSOLE = https://ec2-18-188-76-211:8443
+export OPENSHIFT_CONSOLE = https://18.188.76.211:8443
 export DOCKER_REGISTRY = docker-registry-default.apps.18.217.182.217.nip.io/
 export IMAGE_PROJECT = openshift
 export OPENSHIFT_USER = system
