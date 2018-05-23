@@ -123,16 +123,69 @@ oc delete all -lapp=my-notebook
 
 Zip files
 ```
-gzip -d s2i-minimal-notebook.tar
-gzip -d s2i-tensorflow-notebook.tar
-gzip -d s2i-scipy-notebook.tar
+gzip s2i-minimal-notebook.tar
+gzip s2i-tensorflow-notebook.tar
+gzip s2i-scipy-notebook.tar
 ```
 
 
 Loading into new registry/openshift cluster
 -------------------------------------------
-Transfer the zip files
+Transfer the zip files and unzip
 
+```
+gzip -d s2i-minimal-notebook.tar.gz
+gzip -d s2i-tensorflow-notebook.tar.gz
+gzip -d s2i-scipy-notebook.tar.gz
+```
 
+Prepare environment variables
+```
+# modify as needed 
+export OPENSHIFT_CONSOLE = https://ec2-18-188-76-211:8443
+export DOCKER_REGISTRY = docker-registry-default.apps.18.217.182.217.nip.io/
+export IMAGE_PROJECT = openshift
+export OPENSHIFT_USER = system
+```
+Login to openshift console and docker registry
+```
+oc login $OPENSHIFT_CONSOLE -u $OPENSHIFT_USER
+docker login -p $(oc whoami -t) -u unused $DOCKER_REGISTRY
+```
+
+Load images into registry
+```
+docker load --input s2i-minimal-notebook.tar
+docker load --input s2i-tensorflow-notebook.tar
+docker load --input s2i-scipy-notebook.tar
+```
+
+Verify that the images have been added
+```
+docker images | grep $LOCAL_DOCKER_REGISTRY/$LOCAL_IMAGE_PROJECT/s2i-
+```
+
+Tag the images
+```
+docker tag $LOCAL_DOCKER_REGISTRY/$LOCAL_IMAGE_PROJECT/s2i-minimal-notebook:3.5 $DOCKER_REGISTRY/$IMAGE_PROJECT/s2i-minimal-notebook:3.5
+
+docker tag $LOCAL_DOCKER_REGISTRY/$LOCAL_IMAGE_PROJECT/s2i-tensorflow-notebook:3.5 $DOCKER_REGISTRY/$IMAGE_PROJECT/s2i-tensorflow-notebook:3.5
+
+docker tag $LOCAL_DOCKER_REGISTRY/$LOCAL_IMAGE_PROJECT/s2i-scipy-notebook:3.5 $DOCKER_REGISTRY/$IMAGE_PROJECT/s2i-scipy-notebook:3.5
+```
+
+Verify that the images have been added
+```
+docker images | grep $DOCKER_REGISTRY/$IMAGE_PROJECT/s2i-
+```
+
+Push the images to the registry
+```
+docker push $DOCKER_REGISTRY/$IMAGE_PROJECT/s2i-minimal-notebook:3.5
+
+docker push $DOCKER_REGISTRY/$IMAGE_PROJECT/s2i-tensorflow-notebook:3.5
+
+docker push $DOCKER_REGISTRY/$IMAGE_PROJECT/s2i-scipy-notebook:3.5
+```
 
 
