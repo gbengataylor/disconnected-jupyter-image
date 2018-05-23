@@ -1,5 +1,5 @@
-Instructions to save jupyter images to zip file then reload them in registry
-=============================================================================
+Instructions to save jupyter images locally then reload them in another registry and openshift environment (disconnected operations)
+=================================================================================================
 
 This repository contains steps to 
 * build jupyter images using instructions found https://github.com/jupyter-on-openshift/jupyter-notebooks
@@ -63,5 +63,72 @@ docker rmi $LOCAL_DOCKER_REGISTRY/$LOCAL_IMAGE_PROJECT/s2i-tensorflow-notebook:3
 docker rmi $LOCAL_DOCKER_REGISTRY/$LOCAL_IMAGE_PROJECT/s2i-minimal-notebook:3.5
 docker rmi $LOCAL_DOCKER_REGISTRY/$LOCAL_IMAGE_PROJECT/s2i-scipy-notebook:3.5
 ```
+
+Verify they have been deleted. This command should return no results
+
+```
+docker images | grep $LOCAL_DOCKER_REGISTRY/$LOCAL_IMAGE_PROJECT/s2i-
+```
+
+
+Let's perform a quick test of loading the images from the tar files
+```
+docker load --input s2i-minimal-notebook.tar
+docker load --input s2i-tensorflow-notebook.tar
+docker load --input s2i-scipy-notebook.tar
+```
+
+Verify that they have been loaded. The following statement should return results
+```
+docker images | grep $LOCAL_DOCKER_REGISTRY/$LOCAL_IMAGE_PROJECT/s2i-
+```
+
+Login into registry and push the images to the docker registry. Ensure that you are logged into openshift (Note: the push may be unnecessary)
+```
+docker login -u openshift -p $(oc whoami -t) $LOCAL_DOCKER_REGISTRY
+
+docker push $LOCAL_DOCKER_REGISTRY/$LOCAL_IMAGE_PROJECT/s2i-minimal-notebook:3.5
+docker push $LOCAL_DOCKER_REGISTRY/$LOCAL_IMAGE_PROJECT/s2i-tensorflow-notebook:3.5
+docker push $LOCAL_DOCKER_REGISTRY/$LOCAL_IMAGE_PROJECT/s2i-scipy-notebook:3.5
+```
+
+Test the images by deploying
+```
+oc new-project jupyter
+oc new-app s2i-minimal-notebook:3.5 --name my-notebook \
+    --env JUPYTER_NOTEBOOK_PASSWORD=mypassword
+
+oc create route edge my-notebook --service my-notebook \
+    --insecure-policy Redirect
+```
+confirm that it is working by accessing the notebook via the route
+login with mypassword
+create a new python workspace
+enter the following
+```
+for i in range(500):
+    print(2**i - 1)
+```
+
+and execute
+
+Clean up
+```
+oc delete all -lapp=my-notebook
+```
+
+Zip files
+```
+gzip -d s2i-minimal-notebook.tar
+gzip -d s2i-tensorflow-notebook.tar
+gzip -d s2i-scipy-notebook.tar
+```
+
+
+Loading into new registry/openshift cluster
+-------------------------------------------
+Transfer the zip files
+
+
 
 
