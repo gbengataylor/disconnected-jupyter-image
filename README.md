@@ -3,6 +3,7 @@ Instructions to save jupyter images locally then reload them in another registry
 
 This repository contains steps to 
 * build jupyter images using instructions found https://github.com/jupyter-on-openshift/jupyter-notebooks
+* slight change made in https://github.com/jupyter-on-openshift/jupyter-notebooks to update base image to RHEL python
 * create tar files from these images
 * recreate the images from the tar files locally
 * manually export the images to a different docker repository and openshift cluster
@@ -28,7 +29,9 @@ export JUPYTER_PASSWORD=mypassword
 
 Create the images
 ```
-oc create -f https://raw.githubusercontent.com/jupyter-on-openshift/jupyter-notebooks/master/images.json -n $LOCAL_IMAGE_PROJECT
+#oc create -f https://raw.githubusercontent.com/jupyter-on-openshift/jupyter-notebooks/master/images.json -n $LOCAL_IMAGE_PROJECT
+#use RHEL base layer instead
+oc create -f https://raw.githubusercontent.com/gbengataylor/jupyter-notebooks/master/images.json  -n $LOCAL_IMAGE_PROJECT
 ```
 
 once the images have been created (see original instructions on how to confirm, a tagged image ``s2i-minimal-notebook:$JUPYTER_VERSION`` should be created in the openshift project or the project you ran the command in), you can test the deployment
