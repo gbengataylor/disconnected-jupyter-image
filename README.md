@@ -188,4 +188,34 @@ docker push $DOCKER_REGISTRY/$IMAGE_PROJECT/s2i-tensorflow-notebook:3.5
 docker push $DOCKER_REGISTRY/$IMAGE_PROJECT/s2i-scipy-notebook:3.5
 ```
 
+Test the images by deploying in the new cluster
+```
+oc new-project jupyter
+oc new-app s2i-minimal-notebook:3.5 --name my-notebook \
+    --env JUPYTER_NOTEBOOK_PASSWORD=mypassword
+
+oc create route edge my-notebook --service my-notebook \
+    --insecure-policy Redirect
+```
+confirm that it is working by accessing the notebook via the created route
+
+login with "mypassword" (set above during deploy)
+
+create a new python workspace
+
+enter the following in the code section
+
+```
+for i in range(500):
+    print(2**i - 1)
+```
+
+and execute
+
+Clean up
+```
+oc delete all -lapp=my-notebook
+```
+
+
 
