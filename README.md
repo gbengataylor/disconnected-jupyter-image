@@ -31,7 +31,7 @@ Create the images
 oc create -f https://raw.githubusercontent.com/jupyter-on-openshift/jupyter-notebooks/master/images.json -n $LOCAL_IMAGE_PROJECT
 ```
 
-once the images have been created (see original instructions on how to confirm, a tagged image ``s2i-minimal-notebook:3.5`` should be created in the openshift project or the project you ran the command in), you can test the deployment
+once the images have been created (see original instructions on how to confirm, a tagged image ``s2i-minimal-notebook:$JUPYTER_VERSION`` should be created in the openshift project or the project you ran the command in), you can test the deployment
 
 ```
 oc new-app s2i-minimal-notebook:$JUPYTER_VERSION --name my-notebook \
