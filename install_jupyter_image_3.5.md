@@ -99,3 +99,24 @@ oc create route edge my-notebook --service my-notebook \
 ```
 
 Access the created route and test away!!
+
+Using a Template
+----------------
+A template can also be used to create the app. First the template, jupyter-minimal-notebook.yaml, needs to be loaded into OpenShift
+
+```
+oc create -f jupyter-minimal-notebook.yaml -n $IMAGE_PROJECT
+```
+
+If you ever need to update and replace the template
+```
+oc replace -f jupyter-minimal-notebook.yaml -n $IMAGE_PROJECT
+```
+
+Now this image should be available to developers via the console or they can use the following command
+```
+oc new-app --template=jupyter-minimal-notebook --param APPLICATION_NAME=my-notebook --param PASSWORD=$JUPYTER_PASSWORD --param IMAGE_VERSION=$JUPYTER_VERSION
+```
+
+
+
