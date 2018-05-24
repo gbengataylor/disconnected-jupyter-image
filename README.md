@@ -229,5 +229,22 @@ Clean up
 oc delete all -lapp=my-notebook
 ```
 
+Using a Template
+----------------
+A template can also be used to create the app. First the template needs to be loaded
+
+```
+oc create -f https://raw.githubusercontent.com/gbengataylor/disconnected-jupyter-image/master/jupyter-minimal-notebook.yaml -n $IMAGE_PROJECT
+```
+
+If you ever need to update and replace the template
+```
+oc replace -f https://raw.githubusercontent.com/gbengataylor/disconnected-jupyter-image/master/jupyter-minimal-notebook.yaml -n $IMAGE_PROJECT
+```
+
+Now this image should be available to developers via the console or they can use the following command
+```
+oc new-app --template=jupyter-minimal-notebook --param APPLICATION_NAME=my-notebook --param PASSWORD=$JUPYTER_PASSWORD --param IMAGE_VERSION=$JUPYTER_VERSION
+```
 
 
